@@ -367,6 +367,56 @@
   .vsel{height:50px;background-image:url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235a6678' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
     background-repeat:no-repeat;background-position:right 15px center;padding-right:42px}
 
+  /* ===== guide du douanier ===== */
+  .guide{padding-top:30px}
+  .guide-h{text-align:center;font-size:clamp(24px,4vw,34px);
+    background:linear-gradient(178deg,var(--cyan),var(--blue));-webkit-background-clip:text;
+    background-clip:text;color:transparent;margin-bottom:4px}
+  .steps{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:34px 0}
+  @media(max-width:720px){.steps{grid-template-columns:1fr}}
+  .step{display:flex;gap:15px;background:#fff;border:1px solid var(--line);
+    border-radius:16px;padding:20px 22px;box-shadow:var(--shadow)}
+  .step-n{width:38px;height:38px;flex:none;border-radius:11px;display:grid;place-items:center;
+    font-family:'Russo One';font-size:17px;color:#fff;
+    background:linear-gradient(160deg,var(--cyan),var(--blue));box-shadow:0 8px 16px -8px rgba(11,61,145,.6)}
+  .step-body h3{font-size:16px;margin-bottom:5px;color:var(--blue-ink)}
+  .step-body p{font-size:13.5px;color:var(--grey-deep);line-height:1.5}
+  .guide-card{background:#fff;border:1px solid var(--line);border-radius:18px;
+    padding:24px;box-shadow:var(--shadow);margin-bottom:28px}
+  .gc-head{display:flex;align-items:center;gap:13px;margin-bottom:6px}
+  .gc-ic{width:44px;height:44px;border-radius:12px;flex:none;display:grid;place-items:center;
+    box-shadow:0 8px 16px -8px rgba(11,61,145,.6)}
+  .gc-head h3{font-size:19px;color:var(--blue-ink)}
+  .gc-sub{font-size:14px;color:var(--grey-deep);margin-bottom:18px}
+  .gc-sub b{color:var(--blue)}
+  .bareme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media(max-width:720px){.bareme-grid{grid-template-columns:1fr}}
+  .bareme-item{border:1px solid var(--line);border-radius:13px;padding:16px;background:var(--paper);position:relative}
+  .bi-cat{font-weight:800;font-size:13px;letter-spacing:.5px;text-transform:uppercase;color:var(--blue);margin-bottom:2px}
+  .bi-pts{font-family:'Russo One';font-size:26px;
+    background:linear-gradient(160deg,var(--cyan),var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:7px}
+  .bi-desc{font-size:12.5px;color:var(--grey-deep);line-height:1.45}
+  /* philosophie donner/recevoir */
+  .philo{margin-bottom:28px}
+  .philo-h{text-align:center;font-size:clamp(20px,3vw,26px);color:var(--blue-ink);margin-bottom:8px}
+  .philo-intro{text-align:center;font-size:14px;color:var(--grey-deep);max-width:600px;margin:0 auto 22px;line-height:1.55}
+  .philo-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+  @media(max-width:720px){.philo-grid{grid-template-columns:1fr}}
+  .philo-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow)}
+  .philo-ic{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;margin-bottom:13px;
+    box-shadow:0 8px 16px -8px rgba(11,61,145,.6)}
+  .philo-card h4{font-size:17px;color:var(--blue-ink);margin-bottom:7px}
+  .philo-card p{font-size:13.5px;color:var(--grey-deep);line-height:1.55}
+  .philo-note{display:flex;align-items:flex-start;gap:11px;border:1px solid #cfe6f6;
+    background:#eef7fc;color:#2c6f9c;border-radius:13px;padding:14px 17px;font-size:13.5px;line-height:1.5}
+  .philo-note b{color:#1a5a85}
+  .guide-cta{text-align:center;background:linear-gradient(120deg,var(--blue-deep),var(--blue));
+    border-radius:18px;padding:28px 24px;color:#fff}
+  .guide-cta p{font-size:15px;margin-bottom:16px;opacity:.92}
+  .guide-cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .guide-cta .btn-ghost{background:rgba(255,255,255,.15);color:#fff}
+  .guide-cta .btn-ghost:hover{background:rgba(255,255,255,.26)}
+
   /* ===== footer ===== */
   footer{text-align:center;padding:50px 22px 60px;color:var(--grey);font-size:13px}
   footer .fbrand{font-family:'Russo One';color:var(--blue);font-size:16px;margin-bottom:6px}
@@ -429,6 +479,7 @@
     </div>
     <nav class="nav-links">
       <a href="#top" class="nav-item">Accueil</a>
+      <a href="#guide" class="nav-item">Guide</a>
       <div class="nav-drop">
         <button class="nav-item nav-drop-btn" onclick="toggleEpreuves(event)" aria-haspopup="true" aria-expanded="false">
           Épreuves
@@ -479,6 +530,106 @@
       <p>Colle ta fiche RP : background, objectifs, motivations. Reçois un score et des conseils ciblés.</p>
       <button class="btn btn-primary" onclick="openModule('analyse')">Analyser ma fiche →</button>
     </article>
+  </div>
+</section>
+
+<!-- ============ GUIDE DU DOUANIER ============ -->
+<section id="guide" class="wrap guide">
+  <div class="section-label"><span class="eyebrow">Guide du douanier</span></div>
+  <h2 class="guide-h">Avant de déposer ta candidature</h2>
+  <p class="lead">La Douane n'évalue pas un par cœur : elle cherche des joueurs qui comprennent le RP et qui ont envie de faire vivre le serveur. Voici ce qu'on attend de toi, étape par étape.</p>
+
+  <!-- Le parcours en étapes -->
+  <div class="steps">
+    <div class="step">
+      <div class="step-n">1</div>
+      <div class="step-body">
+        <h3>Lis le règlement en entier</h3>
+        <p>Lexique RP, règles RP et règles HRP : tout est à connaître. Ce ne sont pas des contraintes, mais le langage commun qui permet à tout le monde de jouer ensemble sans casser l'immersion.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">2</div>
+      <div class="step-body">
+        <h3>Entraîne-toi au quiz</h3>
+        <p>Le <b>Mode Whitelist</b> reproduit le barème de l'oral : Lexique, HRP et RP, notés sur 22 points. Vise les <b>15 points</b> requis et regarde ton bilan par catégorie pour cibler ce qu'il te reste à réviser.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">3</div>
+      <div class="step-body">
+        <h3>Prépare ton personnage</h3>
+        <p>Un nom cohérent (jamais un nom de clan du manga), un background travaillé, des objectifs RP clairs et une vraie motivation. Passe ta fiche dans <b>Analyse Dossier</b> pour repérer les bloquants avant le staff.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">4</div>
+      <div class="step-body">
+        <h3>Passe l'oral devant la Douane</h3>
+        <p>Un douanier te pose les questions du barème. Si tu atteins les 15 points et que ton personnage tient la route, tu es whitelist et tu peux entrer en jeu.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Le barème -->
+  <div class="guide-card bareme-card">
+    <div class="gc-head">
+      <span class="gc-ic" style="background:linear-gradient(160deg,var(--cyan),var(--blue))">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
+      <h3>Le barème de la whitelist</h3>
+    </div>
+    <p class="gc-sub">L'oral est noté sur 22 points. Il en faut <b>15 pour valider</b>.</p>
+    <div class="bareme-grid">
+      <div class="bareme-item">
+        <div class="bi-cat">Lexique RP</div>
+        <div class="bi-pts">6 pts</div>
+        <div class="bi-desc">5 questions, dont une à 2 points. Les bases du vocabulaire : FreeKill, PowerGaming, NLR, Fear RP…</div>
+      </div>
+      <div class="bareme-item">
+        <div class="bi-cat">Règles HRP</div>
+        <div class="bi-pts">6 pts</div>
+        <div class="bi-desc">6 questions à 1 point. Tout ce qui touche au hors-RP : déconnexion, push-to-talk, comportement.</div>
+      </div>
+      <div class="bareme-item">
+        <div class="bi-cat">Règles RP</div>
+        <div class="bi-pts">10 pts</div>
+        <div class="bi-desc">6 questions : une à 3 pts, deux à 2 pts, trois à 1 pt. Le cœur du jeu : combats, captures, bastions, guerre.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Donner / recevoir du jeu -->
+  <div class="philo">
+    <h3 class="philo-h">L'esprit Ninja Road : donner du jeu, recevoir du jeu</h3>
+    <p class="philo-intro">La whitelist n'est pas une fin en soi. Une fois en jeu, ce qui compte, c'est l'expérience qu'on construit ensemble. Garde toujours ces deux principes en tête :</p>
+    <div class="philo-grid">
+      <div class="philo-card">
+        <div class="philo-ic" style="background:linear-gradient(160deg,var(--cyan),var(--blue))">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="9"/></svg>
+        </div>
+        <h4>Donne du jeu</h4>
+        <p>Crée des situations, lance des intrigues, laisse toujours une porte de sortie à l'autre. Un bon joueur ne cherche pas à « gagner » : il cherche à créer une scène intéressante, même quand il perd. Joue ton Fear RP, ton Pain RP, accepte la défaite — c'est ça qui rend l'histoire crédible.</p>
+      </div>
+      <div class="philo-card">
+        <div class="philo-ic" style="background:linear-gradient(160deg,#3aa0d8,#0b3d91)">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M20 12a8 8 0 1 1-8-8"/><path d="M16 4l4 4-4 4"/></svg>
+        </div>
+        <h4>Reçois du jeu</h4>
+        <p>Les autres joueurs te donneront aussi du jeu : sois ouvert à leurs scènes, joue le jeu de leurs intrigues, ne refuse pas une situation juste parce qu'elle te dessert. Plus tu participes à l'histoire des autres, plus on viendra construire avec toi.</p>
+      </div>
+    </div>
+    <div class="philo-note">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" style="flex:none"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+      <span>Le staff cherche des joueurs qui <b>donnent autant qu'ils reçoivent</b>. Montre dans ta candidature et en jeu que tu veux faire vivre le serveur, pas seulement « être fort ».</span>
+    </div>
+  </div>
+
+  <div class="guide-cta">
+    <p>Prêt à te lancer ? Commence par t'entraîner, puis vérifie ta fiche.</p>
+    <div class="guide-cta-btns">
+      <button class="btn btn-primary" onclick="openModule('quiz')">Lancer le quiz →</button>
+      <button class="btn btn-ghost" onclick="openModule('analyse')">Analyser ma candidature</button>
+    </div>
   </div>
 </section>
 
