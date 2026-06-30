@@ -463,6 +463,45 @@
   .reg-a{font-size:13.5px;color:var(--grey-deep);line-height:1.6;padding-left:34px}
   @media(max-width:560px){.reg-a{padding-left:0}}
 
+  /* ===== mur de la communauté ===== */
+  .mur{padding-top:30px}
+  .mur-grid{display:grid;grid-template-columns:340px 1fr;gap:22px;margin-top:30px;align-items:start}
+  @media(max-width:760px){.mur-grid{grid-template-columns:1fr}}
+  .avis-form{background:#fff;border:1px solid var(--line);border-radius:18px;
+    padding:24px;box-shadow:var(--shadow);position:sticky;top:80px}
+  @media(max-width:760px){.avis-form{position:static}}
+  .avis-form h3{font-size:18px;color:var(--blue-ink);margin-bottom:16px}
+  .af-label{display:block;font-size:11px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;
+    color:var(--grey-deep);margin:12px 0 6px}
+  .af-input{width:100%;border:1.5px solid var(--line);border-radius:11px;padding:11px 13px;
+    font-family:inherit;font-size:14px;color:var(--blue-ink);background:var(--paper);transition:.15s;resize:none}
+  .af-input:focus{outline:none;border-color:var(--cyan);background:#fff}
+  .af-area{line-height:1.5}
+  .af-count{text-align:right;font-size:11px;color:var(--grey);margin-top:4px}
+  .af-stars{display:flex;gap:4px;font-size:26px;color:var(--mist);cursor:pointer;user-select:none}
+  .af-stars span{transition:.12s;color:#dfe6ef}
+  .af-stars span.on{color:#f6b73c}
+  .af-stars span:hover{transform:scale(1.15)}
+  .af-send{width:100%;justify-content:center;margin-top:18px}
+  .af-hint{font-size:12.5px;margin-top:10px;text-align:center;min-height:16px}
+  .af-hint.err{color:var(--bad)}
+  .af-hint.ok{color:var(--good)}
+  .avis-list-head{display:flex;align-items:center;margin-bottom:14px}
+  #avis-total{font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--grey-deep)}
+  .avis-list{display:flex;flex-direction:column;gap:13px}
+  .avis-card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:17px 19px;box-shadow:var(--shadow)}
+  .avis-card-top{display:flex;align-items:center;gap:11px;margin-bottom:9px}
+  .avis-ava{width:40px;height:40px;border-radius:50%;flex:none;display:grid;place-items:center;
+    font-family:'Russo One';font-size:16px;color:#fff;
+    background:linear-gradient(160deg,var(--cyan),var(--blue))}
+  .avis-meta{flex:1;min-width:0}
+  .avis-pseudo{font-weight:800;font-size:14.5px;color:var(--blue-ink)}
+  .avis-stars-show{font-size:13px;color:#f6b73c;letter-spacing:1px}
+  .avis-date{font-size:11px;color:var(--grey);margin-left:auto;flex:none}
+  .avis-texte{font-size:13.5px;color:var(--grey-deep);line-height:1.55;white-space:pre-wrap;word-break:break-word}
+  .avis-empty{text-align:center;padding:40px 20px;color:var(--grey);
+    border:1.5px dashed var(--line);border-radius:15px;font-size:14px}
+
   /* ===== footer ===== */
   footer{text-align:center;padding:50px 22px 60px;color:var(--grey);font-size:13px}
   footer .fbrand{font-family:'Russo One';color:var(--blue);font-size:16px;margin-bottom:6px}
@@ -700,6 +739,42 @@
     <div class="guide-cta-btns">
       <button class="btn btn-primary" onclick="openModule('quiz')">Lancer le quiz →</button>
       <button class="btn btn-ghost" onclick="openModule('analyse')">Analyser ma candidature</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MUR DE LA COMMUNAUTÉ ============ -->
+<section id="mur" class="wrap mur">
+  <div class="section-label"><span class="eyebrow">Mur de la communauté</span></div>
+  <h2 class="guide-h">Ils ont testé le site</h2>
+  <p class="lead">Partage ton expérience et découvre les avis des autres joueurs de Ninja Road.</p>
+
+  <div class="mur-grid">
+    <!-- Formulaire à gauche -->
+    <div class="avis-form">
+      <h3>Laisse ton avis</h3>
+      <label class="af-label" for="avis-pseudo">Ton pseudo</label>
+      <input class="af-input" id="avis-pseudo" type="text" maxlength="24" placeholder="Ex : Haruki Senju">
+
+      <label class="af-label" for="avis-note">Ta note</label>
+      <div class="af-stars" id="avis-stars">
+        <span data-n="1">★</span><span data-n="2">★</span><span data-n="3">★</span><span data-n="4">★</span><span data-n="5">★</span>
+      </div>
+
+      <label class="af-label" for="avis-texte">Ton expérience</label>
+      <textarea class="af-input af-area" id="avis-texte" maxlength="400" rows="4" placeholder="Partage ton expérience du site, ce que tu as aimé, ce qui t'a aidé pour ta whitelist…"></textarea>
+      <div class="af-count"><span id="avis-count">0</span>/400</div>
+
+      <button class="btn btn-primary af-send" onclick="postAvis()">Publier mon avis</button>
+      <div class="af-hint" id="avis-hint"></div>
+    </div>
+
+    <!-- Avis à droite -->
+    <div class="avis-list-wrap">
+      <div class="avis-list-head">
+        <span id="avis-total">0 avis</span>
+      </div>
+      <div class="avis-list" id="avis-list"></div>
     </div>
   </div>
 </section>
@@ -1574,6 +1649,99 @@ function setVolume(v){
   if(v==0){_music.classList.add('muted');}
   else if(!_audio.paused){_music.classList.remove('muted');}
 }
+
+/* ============================================================
+   MUR DE LA COMMUNAUTÉ — avis des joueurs
+   ------------------------------------------------------------
+   STOCKAGE : pour l'instant en local (navigateur du visiteur).
+   Pour des avis partagés entre tous, il suffira de remplacer
+   _loadAvis() et _saveAvis() par des appels à ta base en ligne.
+   ============================================================ */
+let _avisNote=0;
+
+// --- étoiles de notation ---
+(function(){
+  const stars=document.querySelectorAll('#avis-stars span');
+  stars.forEach(s=>{
+    s.addEventListener('click',()=>{ _avisNote=+s.dataset.n; _paintStars(_avisNote); });
+    s.addEventListener('mouseenter',()=>_paintStars(+s.dataset.n));
+  });
+  document.getElementById('avis-stars').addEventListener('mouseleave',()=>_paintStars(_avisNote));
+  // compteur de caractères
+  const ta=document.getElementById('avis-texte');
+  ta.addEventListener('input',()=>document.getElementById('avis-count').textContent=ta.value.trim().length);
+})();
+function _paintStars(n){
+  document.querySelectorAll('#avis-stars span').forEach(s=>{
+    s.classList.toggle('on', +s.dataset.n<=n);
+  });
+}
+
+// --- stockage (LOCAL provisoire) ---
+function _loadAvis(){
+  try{ return JSON.parse(localStorage.getItem('nr_avis')||'[]'); }
+  catch(e){ return []; }
+}
+function _saveAvis(list){
+  try{ localStorage.setItem('nr_avis', JSON.stringify(list)); }catch(e){}
+}
+
+// --- publier un avis ---
+function postAvis(){
+  const pseudo=document.getElementById('avis-pseudo').value.trim();
+  const texte=document.getElementById('avis-texte').value.trim();
+  const hint=document.getElementById('avis-hint');
+  if(pseudo.length<2){ hint.className='af-hint err'; hint.textContent='Indique un pseudo (2 caractères min).'; return; }
+  if(_avisNote===0){ hint.className='af-hint err'; hint.textContent='Choisis une note en cliquant sur les étoiles.'; return; }
+  if(texte.length<5){ hint.className='af-hint err'; hint.textContent='Écris quelques mots sur ton expérience.'; return; }
+
+  const list=_loadAvis();
+  list.unshift({pseudo, texte, note:_avisNote, date:Date.now()});
+  _saveAvis(list);
+
+  // reset
+  document.getElementById('avis-pseudo').value='';
+  document.getElementById('avis-texte').value='';
+  document.getElementById('avis-count').textContent='0';
+  _avisNote=0; _paintStars(0);
+  hint.className='af-hint ok'; hint.textContent='Merci ! Ton avis a été publié.';
+  setTimeout(()=>{hint.textContent='';},2500);
+  renderAvis();
+}
+
+// --- affichage ---
+function _initiale(p){ return (p.trim()[0]||'?').toUpperCase(); }
+function _dateAvis(ts){
+  const d=new Date(ts);
+  return d.toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'});
+}
+function renderAvis(){
+  const list=_loadAvis();
+  const box=document.getElementById('avis-list');
+  const total=document.getElementById('avis-total');
+  total.textContent=list.length+' avis';
+  if(!list.length){
+    box.innerHTML=`<div class="avis-empty">Aucun avis pour le moment.<br>Sois le premier à partager ton expérience ! 🍃</div>`;
+    return;
+  }
+  box.innerHTML=list.map(a=>`
+    <div class="avis-card">
+      <div class="avis-card-top">
+        <div class="avis-ava">${_initiale(a.pseudo)}</div>
+        <div class="avis-meta">
+          <div class="avis-pseudo">${_escapeHtml(a.pseudo)}</div>
+          <div class="avis-stars-show">${'★'.repeat(a.note)}<span style="color:#dfe6ef">${'★'.repeat(5-a.note)}</span></div>
+        </div>
+        <div class="avis-date">${_dateAvis(a.date)}</div>
+      </div>
+      <div class="avis-texte">${_escapeHtml(a.texte)}</div>
+    </div>`).join('');
+}
+function _escapeHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+          .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+renderAvis();
 
 /* ============================================================
    EFFETS : curseur kunai + cercle rouge + particules flottantes
