@@ -85,6 +85,24 @@
   .nav-drop-btn .caret{transition:transform .2s}
   .nav-drop.open .nav-drop-btn{background:rgba(255,255,255,.16);color:#fff}
   .nav-drop.open .caret{transform:rotate(180deg)}
+  /* lecteur musique */
+  .music{display:flex;align-items:center;gap:6px;margin-left:8px;
+    background:rgba(255,255,255,.13);border-radius:99px;padding:4px 6px}
+  .music-btn{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;
+    color:#fff;cursor:pointer;background:rgba(255,255,255,.0);transition:.16s;border:none}
+  .music-btn:hover{background:rgba(255,255,255,.2)}
+  .music-btn .ic-off{display:none}
+  .music.muted .music-btn .ic-on{display:none}
+  .music.muted .music-btn .ic-off{display:block}
+  .music.playing .music-btn{color:var(--cyan-soft)}
+  .music-vol{width:0;opacity:0;height:4px;cursor:pointer;transition:.22s;
+    -webkit-appearance:none;appearance:none;background:rgba(255,255,255,.3);border-radius:99px}
+  .music:hover .music-vol,.music:focus-within .music-vol{width:70px;opacity:1;margin-right:4px}
+  .music-vol::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;
+    background:#fff;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+  .music-vol::-moz-range-thumb{width:13px;height:13px;border:none;border-radius:50%;
+    background:#fff;cursor:pointer}
+  @media(max-width:680px){.music{margin-left:auto}}
   .drop-menu{position:absolute;top:calc(100% + 10px);right:0;min-width:300px;
     background:#fff;border:1px solid var(--line);border-radius:16px;
     box-shadow:0 24px 50px -20px rgba(8,42,107,.4);padding:10px;
@@ -532,6 +550,18 @@
         </div>
       </div>
     </nav>
+
+    <div class="music" id="music">
+      <audio id="music-audio" loop preload="auto">
+        <!-- Dépose ici le mp3 : remplace le src ci-dessous par le nom de ton fichier -->
+        <source id="music-src" src="" type="audio/mpeg">
+      </audio>
+      <button class="music-btn" id="music-btn" onclick="toggleMusic(event)" title="Musique" aria-label="Activer/couper la musique">
+        <svg class="ic-on" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a9 9 0 0 1 0 14"/></svg>
+        <svg class="ic-off" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M22 9l-6 6M16 9l6 6"/></svg>
+      </button>
+      <input class="music-vol" id="music-vol" type="range" min="0" max="100" value="45" oninput="setVolume(this.value)" title="Volume" aria-label="Volume de la musique">
+    </div>
   </div>
 </header>
 
@@ -1490,6 +1520,49 @@ document.querySelectorAll('.module').forEach(m=>{
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){
   document.querySelectorAll('.module.open').forEach(m=>m.classList.remove('open'));
   document.body.style.overflow='';}});
+
+/* ============================================================
+   LECTEUR MUSIQUE
+   ============================================================ */
+const _audio=document.getElementById('music-audio');
+const _music=document.getElementById('music');
+let _musicReady=false, _userMuted=false;
+// volume initial
+_audio.volume=0.45;
+// démarrage au premier clic/interaction sur la page (les navigateurs bloquent l'autoplay avant)
+function _tryStartMusic(){
+  if(_musicReady || _userMuted) return;
+  if(!_audio.querySelector('source').src) return; // pas de mp3 encore
+  _audio.play().then(()=>{
+    _musicReady=true;
+    _music.classList.add('playing');
+    _music.classList.remove('muted');
+  }).catch(()=>{});
+}
+['click','keydown','touchstart'].forEach(ev=>
+  document.addEventListener(ev,_tryStartMusic,{once:false}));
+
+function toggleMusic(e){
+  if(e) e.stopPropagation();
+  if(!_audio.querySelector('source').src){
+    alert("La musique n'est pas encore installée. Ajoute ton fichier mp3 pour l'activer.");
+    return;
+  }
+  if(_audio.paused){
+    _userMuted=false;
+    _audio.play().then(()=>{_music.classList.add('playing');_music.classList.remove('muted');}).catch(()=>{});
+  } else {
+    _userMuted=true;
+    _audio.pause();
+    _music.classList.add('muted');
+    _music.classList.remove('playing');
+  }
+}
+function setVolume(v){
+  _audio.volume=v/100;
+  if(v==0){_music.classList.add('muted');}
+  else if(!_audio.paused){_music.classList.remove('muted');}
+}
 
 /* ============================================================
    EFFETS : curseur kunai + cercle rouge + particules flottantes
