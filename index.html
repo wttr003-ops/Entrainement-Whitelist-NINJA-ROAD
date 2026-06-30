@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Ninja Road · Entraînement Whitelist</title>
-<meta name="description" content="Outil d'aide aux joueurs de Ninja Road : quiz des règles, examen Genin chronométré et analyse de candidature RP. Gratuit, sans inscription.">
+<meta name="description" content="Outil d'aide aux joueurs de Ninja Road : quiz des règles et analyse de candidature RP. Gratuit, sans inscription.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -42,6 +42,21 @@
   button{font-family:inherit;cursor:pointer;border:none;background:none}
   :focus-visible{outline:3px solid var(--cyan);outline-offset:3px;border-radius:6px}
 
+  /* ===== effets globaux ===== */
+  #fx-particles{position:fixed;inset:0;z-index:0;pointer-events:none}
+  #fx-ring{position:fixed;top:0;left:0;width:130px;height:130px;border-radius:50%;
+    border:2px solid rgba(224,80,74,.55);box-shadow:0 0 24px 4px rgba(224,80,74,.18);
+    pointer-events:none;z-index:1;transform:translate(-50%,-50%);
+    transition:opacity .4s;opacity:.7}
+  #fx-kunai{position:fixed;top:0;left:0;z-index:9999;pointer-events:none;
+    transform:translate(-50%,-50%) rotate(35deg);filter:drop-shadow(0 3px 5px rgba(6,24,63,.4));
+    will-change:transform;display:none}
+  @media(hover:hover) and (pointer:fine){
+    body.kunai *{cursor:none!important}
+    body.kunai #fx-kunai{display:block}
+  }
+  .wrap,header.top,.hero,#outils,footer{position:relative;z-index:2}
+
   /* ===== Backdrop scenery ===== */
   .scene{position:fixed;inset:0;z-index:-1;pointer-events:none;
     background:linear-gradient(180deg,#fbfdff 0%,#eef3f9 55%,#e3ebf4 100%);}
@@ -59,8 +74,29 @@
     box-shadow:0 6px 14px -6px rgba(11,61,145,.6)}
   .brand small{display:block;font-family:'Inter';font-weight:600;font-size:10px;
     letter-spacing:2px;color:var(--cyan);text-transform:uppercase}
-  .nav-links{margin-left:auto;display:flex;gap:6px}
-  .nav-links a{padding:8px 14px;border-radius:10px;font-weight:600;font-size:14px;color:var(--grey-deep);transition:.18s}
+  .nav-links{margin-left:auto;display:flex;gap:6px;align-items:center}
+  .nav-item{padding:8px 14px;border-radius:10px;font-weight:600;font-size:14px;
+    color:var(--grey-deep);transition:.18s;cursor:pointer;display:inline-flex;align-items:center;gap:6px;
+    background:none;border:none;font-family:inherit}
+  .nav-item:hover{background:var(--mist);color:var(--blue)}
+  .nav-drop{position:relative}
+  .nav-drop-btn .caret{transition:transform .2s}
+  .nav-drop.open .nav-drop-btn{background:var(--mist);color:var(--blue)}
+  .nav-drop.open .caret{transform:rotate(180deg)}
+  .drop-menu{position:absolute;top:calc(100% + 10px);right:0;min-width:300px;
+    background:#fff;border:1px solid var(--line);border-radius:16px;
+    box-shadow:0 24px 50px -20px rgba(8,42,107,.4);padding:10px;
+    opacity:0;visibility:hidden;transform:translateY(-8px);transition:.2s;z-index:60}
+  .nav-drop.open .drop-menu{opacity:1;visibility:visible;transform:translateY(0)}
+  .drop-label{font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;
+    color:var(--grey);padding:8px 12px 6px}
+  .drop-it{display:flex;align-items:center;gap:13px;padding:11px 12px;border-radius:11px;
+    cursor:pointer;transition:.15s;text-decoration:none}
+  .drop-it:hover{background:var(--paper)}
+  .drop-ic{width:38px;height:38px;border-radius:11px;flex:none;display:grid;place-items:center;
+    box-shadow:0 6px 14px -7px rgba(11,61,145,.6)}
+  .drop-it b{display:block;font-size:14px;color:var(--blue-ink);font-weight:700}
+  .drop-it small{display:block;font-size:12px;color:var(--grey-deep);margin-top:1px}
   .nav-links a:hover{background:var(--mist);color:var(--blue)}
   @media(max-width:680px){.nav-links{display:none}}
 
@@ -231,10 +267,30 @@
   .ana-note{display:flex;gap:9px;align-items:flex-start;border:1px solid #f0dcae;
     background:#fdf6e6;border-radius:12px;padding:12px 14px;font-size:12.5px;color:#8a6d2f}
   .ana-note b{color:#6b521f}
-  .scorebar{display:flex;gap:10px;margin-bottom:18px}
-  .stat{flex:1;border:1px solid var(--line);border-radius:12px;padding:11px 13px;background:#fff;text-align:center}
-  .stat .v{font-family:'Russo One';font-size:22px;line-height:1}
-  .stat .l{font-size:9.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--grey);margin-top:4px}
+  .scorebar{display:flex;gap:10px}
+  .stat{border:1px solid var(--line);border-radius:12px;padding:9px 15px;background:#fff;text-align:center;min-width:92px}
+  .stat .v{font-family:'Russo One';font-size:21px;line-height:1}
+  .stat .v .su{font-size:11px;color:var(--grey);margin-left:1px}
+  .stat .l{font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--grey);margin-bottom:5px}
+  /* héro ruban Analyse Dossier */
+  .ana-hero{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;
+    flex-wrap:wrap;margin-bottom:14px}
+  .ana-kicker{font-size:11px;font-weight:800;letter-spacing:3px;text-transform:uppercase;
+    color:var(--cyan);margin-bottom:9px}
+  .ana-ribbon{display:inline-block;font-family:'Russo One';font-size:clamp(26px,4vw,38px);
+    color:#fff;padding:8px 22px;background:linear-gradient(120deg,var(--cyan),var(--blue));
+    transform:skewX(-7deg);box-shadow:0 12px 26px -12px rgba(11,61,145,.7);letter-spacing:1px}
+  .ana-ribbon{position:relative}
+  .ana-ribbon::before,.ana-ribbon::after{content:"";position:absolute;width:13px;height:13px;
+    border:2px solid var(--cyan);border-radius:50%;opacity:.5}
+  .ana-ribbon::before{top:-6px;left:-8px}
+  .ana-ribbon::after{bottom:-6px;right:-8px}
+  .ana-tag{font-size:13px;color:var(--grey-deep);margin-top:12px;font-weight:500;max-width:380px}
+  .ana-warn-banner{display:flex;align-items:center;gap:10px;border:1px solid #cfe6f6;
+    background:#eef7fc;color:#2c6f9c;border-radius:12px;padding:11px 15px;font-size:12.5px;
+    font-weight:500;margin-bottom:20px}
+  .ana-warn-banner b{color:#1a5a85}
+  @media(max-width:560px){.ana-hero{flex-direction:column;align-items:flex-start}.scorebar{width:100%}.stat{flex:1}}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   @media(max-width:520px){.grid2{grid-template-columns:1fr}}
 
@@ -269,6 +325,16 @@
 </head>
 <body>
 
+<canvas id="fx-particles" aria-hidden="true"></canvas>
+<div id="fx-ring" aria-hidden="true"></div>
+<div id="fx-kunai" aria-hidden="true">
+  <svg width="34" height="34" viewBox="0 0 32 32" fill="none">
+    <path d="M15 2 L18 13 L16 30 L14 13 Z" fill="#1BA4E0" stroke="#0B3D91" stroke-width="1"/>
+    <circle cx="16" cy="11" r="3.2" fill="#fff" stroke="#0B3D91" stroke-width="1"/>
+    <path d="M12 6 Q16 9 20 6" stroke="#0B3D91" stroke-width="1.4" fill="none"/>
+  </svg>
+</div>
+
 <div class="scene" aria-hidden="true">
   <svg viewBox="0 0 1440 420" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
     <!-- far mountains -->
@@ -295,10 +361,26 @@
       <span>NINJA ROAD<small>Entraînement Whitelist</small></span>
     </div>
     <nav class="nav-links">
-      <a href="#outils">Outils</a>
-      <a onclick="openModule('quiz')">Quiz</a>
-      <a class="nav-disabled" title="Indisponible pour le moment">Examen Genin</a>
-      <a onclick="openModule('analyse')">Candidature</a>
+      <a href="#top" class="nav-item">Accueil</a>
+      <div class="nav-drop">
+        <button class="nav-item nav-drop-btn" onclick="toggleEpreuves(event)" aria-haspopup="true" aria-expanded="false">
+          Épreuves
+          <svg class="caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="drop-menu" id="epreuves-menu">
+          <div class="drop-label">Les épreuves</div>
+          <a class="drop-it" onclick="openModule('quiz');closeEpreuves()">
+            <span class="drop-ic" style="background:linear-gradient(160deg,var(--cyan),var(--blue))">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg></span>
+            <span><b>Quizz Global</b><small>Entraînement libre, toutes catégories.</small></span>
+          </a>
+          <a class="drop-it" onclick="openModule('analyse');closeEpreuves()">
+            <span class="drop-ic" style="background:linear-gradient(160deg,#3aa0d8,#0b3d91)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span>
+            <span><b>Analyse Dossier</b><small>Vérifie ta candidature avant le staff.</small></span>
+          </a>
+        </div>
+      </div>
     </nav>
   </div>
 </header>
@@ -311,8 +393,8 @@
 </section>
 
 <section id="outils" class="wrap">
-  <div class="section-label"><span class="eyebrow">3 outils</span></div>
-  <p class="lead">Tout ce qu'il te faut pour arriver prêt : les règles, l'examen, et ta candidature.</p>
+  <div class="section-label"><span class="eyebrow">2 épreuves</span></div>
+  <p class="lead">Tout ce qu'il te faut pour arriver prêt : les règles et ta candidature.</p>
 
   <div class="tools">
     <article class="tool">
@@ -321,15 +403,6 @@
       <h3>Quiz des règles</h3>
       <p>Toutes les catégories : RP, règlement, lore et hiérarchie. Correction immédiate avec explications.</p>
       <button class="btn btn-primary" onclick="openModule('quiz')">Lancer le quiz →</button>
-    </article>
-
-    <article class="tool disabled" aria-disabled="true">
-      <span class="soon-tag">Indisponible</span>
-      <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 2h6"/></svg></div>
-      <div class="meta">Chronométré</div>
-      <h3>Examen Genin</h3>
-      <p>Conditions réelles : questions limitées dans le temps. Validé à 70 %, comme pour ta whitelist.</p>
-      <button class="btn btn-disabled" disabled>Indisponible pour le moment</button>
     </article>
 
     <article class="tool">
@@ -360,25 +433,12 @@
   </div>
 </div>
 
-<!-- ============ EXAM MODULE ============ -->
-<div class="module" id="m-exam">
-  <div class="panel">
-    <div class="panel-head">
-      <div class="ph-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/></svg></div>
-      <div><h2>Examen Genin</h2><div class="ph-sub">Chronométré · 70 % pour valider</div></div>
-      <div class="timer" id="exam-timer">00:00</div>
-      <button class="close" onclick="closeModule('exam')">×</button>
-    </div>
-    <div class="panel-body" id="exam-body"></div>
-  </div>
-</div>
-
 <!-- ============ ANALYSE MODULE ============ -->
 <div class="module" id="m-analyse">
   <div class="panel wide">
     <div class="panel-head">
       <div class="ph-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div>
-      <div><h2>Analyse de candidature</h2><div class="ph-sub">Auto-évaluation de ta fiche RP</div></div>
+      <div><h2>Analyse Dossier</h2><div class="ph-sub">Whitelist · pré-soumission</div></div>
       <button class="close" onclick="closeModule('analyse')">×</button>
     </div>
     <div class="panel-body" id="analyse-body"></div>
@@ -392,7 +452,7 @@
 /* ============================================================
    BANQUE DE QUESTIONS — générée depuis le règlement Ninja Road
    (Lexique RP · Règles HRP · Règles RP)
-   Le quiz et l'examen piochent au hasard et mélangent l'ordre
+   Le quiz pioche au hasard et mélange l'ordre
    des questions ET des réponses à chaque tentative.
    Ajoute/retire librement des objets {q,o,a,e,cat}.
    a = index de la bonne réponse dans o (avant mélange)
@@ -622,12 +682,9 @@ const BANK = [
 ];
 
 /* ============================================================
-   RÉGLAGES — quiz & examen tirent au hasard dans BANK
+   RÉGLAGES — le quiz tire au hasard dans BANK
    ============================================================ */
 const QUIZ_COUNT  = 10;            // nb de questions par session de quiz
-const EXAM_COUNT  = 8;             // nb de questions à l'examen
-const EXAM_SECONDS = EXAM_COUNT*45;// 45s par question
-const EXAM_PASS = 0.70;            // 70% pour valider
 
 /* mélange un tableau (Fisher-Yates), renvoie une copie */
 function shuffle(arr){const a=arr.slice();for(let i=a.length-1;i>0;i--){
@@ -696,61 +753,6 @@ function resultQuiz(){
 }
 
 /* ============================================================
-   EXAMEN (chrono global, résultat à la fin)
-   ============================================================ */
-let ei=0, eAnswers=[], etimer=null, eleft=0;
-let curExam=[];
-function renderExam(){
-  curExam=drawQuestions(EXAM_COUNT);
-  ei=0;eAnswers=new Array(curExam.length).fill(null);eleft=EXAM_SECONDS;
-  startTimer();drawExam();
-}
-function startTimer(){
-  clearInterval(etimer);updateTimer();
-  etimer=setInterval(()=>{eleft--;updateTimer();
-    if(eleft<=0){clearInterval(etimer);finishExam();}},1000);
-}
-function updateTimer(){
-  const m=String(Math.floor(eleft/60)).padStart(2,'0');
-  const s=String(eleft%60).padStart(2,'0');
-  const t=document.getElementById('exam-timer');
-  t.textContent=`${m}:${s}`;
-  t.classList.toggle('low',eleft<=20);
-}
-function drawExam(){
-  const body=document.getElementById('exam-body');
-  const item=curExam[ei];
-  const pct=(ei/curExam.length)*100;
-  body.innerHTML=`
-    <div class="progress"><span style="width:${pct}%"></span></div>
-    <div class="q-count">Question ${ei+1} / ${curExam.length}</div>
-    <div class="q-text">${item.q}</div>
-    <div class="opts" id="e-opts">
-      ${item.o.map((t,i)=>`<button class="opt ${eAnswers[ei]===i?'correct':''}" data-i="${i}" onclick="pickExam(${i})">
-        <span class="key">${"ABCD"[i]}</span>${t}</button>`).join("")}
-    </div>
-    <div class="nav-q">
-      ${ei>0?`<button class="btn btn-ghost" onclick="prevExam()">← Retour</button>`:''}
-      <button class="btn btn-primary" onclick="nextExam()">${ei<curExam.length-1?'Suivant →':'Terminer l\'examen'}</button>
-    </div>`;
-}
-function pickExam(i){eAnswers[ei]=i;
-  document.querySelectorAll('#e-opts .opt').forEach((b,bi)=>b.classList.toggle('correct',bi===i));}
-function nextExam(){if(ei<curExam.length-1){ei++;drawExam();}else finishExam();}
-function prevExam(){if(ei>0){ei--;drawExam();}}
-function finishExam(){
-  clearInterval(etimer);
-  let sc=0;curExam.forEach((it,k)=>{if(eAnswers[k]===it.a)sc++;});
-  const pct=Math.round(sc/curExam.length*100);
-  const pass=pct>=EXAM_PASS*100;
-  document.getElementById('exam-timer').textContent='—';
-  document.getElementById('exam-timer').classList.remove('low');
-  document.getElementById('exam-body').innerHTML=resultHTML(pct,sc,curExam.length,pass,
-    pass?"Examen Genin validé ! Tu es prêt à passer devant la Douane.":"Examen non validé (70 % requis). Entraîne-toi encore et retente.",
-    "renderExam()");
-}
-
-/* ============================================================
    RÉSULTAT partagé (anneau de score)
    ============================================================ */
 function resultHTML(pct,sc,total,pass,msg,retryFn){
@@ -779,10 +781,21 @@ function resultHTML(pct,sc,total,pass,msg,retryFn){
    ============================================================ */
 function renderAnalyse(){
   document.getElementById('analyse-body').innerHTML=`
-    <div class="scorebar">
-      <div class="stat"><div class="v" id="s-ana" style="color:var(--grey)">—</div><div class="l">Verdict</div></div>
-      <div class="stat"><div class="v" id="s-bg" style="color:var(--cyan)">0</div><div class="l">Caractères background</div></div>
-      <div class="stat"><div class="v" id="s-goal" style="color:var(--cyan)">0</div><div class="l">Caractères objectifs</div></div>
+    <div class="ana-hero">
+      <div class="ana-hero-left">
+        <div class="ana-kicker">Whitelist · pré-soumission</div>
+        <div class="ana-ribbon">ANALYSE DOSSIER</div>
+        <p class="ana-tag">Détecte les bloquants avant de soumettre ton dossier au staff.</p>
+      </div>
+      <div class="scorebar">
+        <div class="stat"><div class="l">Verdict</div><div class="v" id="s-ana" style="color:var(--grey)">—</div></div>
+        <div class="stat"><div class="l">Background</div><div class="v" id="s-bg" style="color:var(--cyan)">0<span class="su">/250</span></div></div>
+        <div class="stat"><div class="l">Objectifs</div><div class="v" id="s-goal" style="color:var(--cyan)">0<span class="su">/150</span></div></div>
+      </div>
+    </div>
+    <div class="ana-warn-banner">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" style="flex:none"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16h.01"/></svg>
+      <span><b>Outil indépendant.</b> Ce diagnostic est automatique et imparfait — un verdict « Bon » ne garantit pas l'acceptation.</span>
     </div>
 
     <div class="ana-grid">
@@ -869,8 +882,9 @@ function liveCount(){
   const eb=document.getElementById('wc-bg'),eg=document.getElementById('wc-goal');
   eb.textContent=`${bgc} / 250 caractères`;eb.className='wc '+(bgc>=250?'ok':bgc>0?'low':'');
   eg.textContent=`${goalc} / 150 caractères`;eg.className='wc '+(goalc>=150?'ok':goalc>0?'low':'');
-  document.getElementById('s-bg').textContent=bgc;
-  document.getElementById('s-goal').textContent=goalc;
+  const sb=document.getElementById('s-bg'),sg=document.getElementById('s-goal');
+  sb.innerHTML=bgc+'<span class="su">/250</span>';sb.style.color=bgc>=250?'var(--good)':'var(--cyan)';
+  sg.innerHTML=goalc+'<span class="su">/150</span>';sg.style.color=goalc>=150?'var(--good)':'var(--cyan)';
 }
 function runAnalyse(){
   const name=val('a-name'),village=val('a-village'),
@@ -998,21 +1012,85 @@ function openModule(name){
   document.getElementById('m-'+name).classList.add('open');
   document.body.style.overflow='hidden';
   if(name==='quiz')renderQuiz();
-  if(name==='exam')renderExam();
   if(name==='analyse')renderAnalyse();
 }
 function closeModule(name){
   document.getElementById('m-'+name).classList.remove('open');
   document.body.style.overflow='';
-  if(name==='exam')clearInterval(etimer);
 }
+/* menu déroulant Épreuves */
+function toggleEpreuves(e){
+  e.stopPropagation();
+  const d=e.currentTarget.closest('.nav-drop');
+  const open=d.classList.toggle('open');
+  e.currentTarget.setAttribute('aria-expanded',open);
+}
+function closeEpreuves(){
+  document.querySelectorAll('.nav-drop.open').forEach(d=>{
+    d.classList.remove('open');
+    const b=d.querySelector('.nav-drop-btn');if(b)b.setAttribute('aria-expanded','false');
+  });
+}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.nav-drop'))closeEpreuves();
+});
 document.querySelectorAll('.module').forEach(m=>{
   m.addEventListener('click',e=>{if(e.target===m){
-    m.classList.remove('open');document.body.style.overflow='';clearInterval(etimer);}});
+    m.classList.remove('open');document.body.style.overflow='';}});
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){
   document.querySelectorAll('.module.open').forEach(m=>m.classList.remove('open'));
-  document.body.style.overflow='';clearInterval(etimer);}});
+  document.body.style.overflow='';}});
+
+/* ============================================================
+   EFFETS : curseur kunai + cercle rouge + particules flottantes
+   ============================================================ */
+(function(){
+  const fine = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+  const reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  // --- curseur kunai + cercle rouge qui suit la souris ---
+  if(fine){
+    document.body.classList.add('kunai');
+    const kunai=document.getElementById('fx-kunai');
+    const ring=document.getElementById('fx-ring');
+    let mx=innerWidth/2,my=innerHeight/2, rx=mx,ry=my;
+    addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;
+      kunai.style.transform=`translate(${mx}px,${my}px) translate(-50%,-50%) rotate(35deg)`;});
+    (function follow(){ rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12;
+      ring.style.transform=`translate(${rx}px,${ry}px) translate(-50%,-50%)`;
+      requestAnimationFrame(follow);})();
+    addEventListener('mousedown',()=>{ring.style.opacity='1';ring.style.width='90px';ring.style.height='90px';});
+    addEventListener('mouseup',()=>{ring.style.opacity='.7';ring.style.width='130px';ring.style.height='130px';});
+  }
+
+  // --- particules flottantes (canvas) ---
+  if(reduce) return;
+  const cv=document.getElementById('fx-particles'), ctx=cv.getContext('2d');
+  let W,H,parts=[];
+  function resize(){W=cv.width=innerWidth;H=cv.height=innerHeight;}
+  resize(); addEventListener('resize',resize);
+  const N = innerWidth<600?22:46;
+  for(let i=0;i<N;i++){
+    parts.push({x:Math.random()*W,y:Math.random()*H,
+      r:Math.random()*2.4+0.8,
+      vx:(Math.random()-0.5)*0.5, vy:(Math.random()-0.5)*0.22,
+      a:Math.random()*0.4+0.18,
+      c:Math.random()>0.5?'27,164,224':'11,61,145'});
+  }
+  function tick(){
+    ctx.clearRect(0,0,W,H);
+    for(const p of parts){
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<-10)p.x=W+10; if(p.x>W+10)p.x=-10;
+      if(p.y<-10)p.y=H+10; if(p.y>H+10)p.y=-10;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,6.283);
+      ctx.fillStyle=`rgba(${p.c},${p.a})`;ctx.fill();
+    }
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
 </script>
 </body>
 </html>
