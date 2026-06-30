@@ -214,6 +214,23 @@
   .fl-good{font-weight:700;color:var(--good)}
   .no-faute{text-align:center;padding:20px;border-radius:12px;background:#eafaf2;
     color:var(--good);font-weight:700;border:1px solid #b6e6cd}
+  /* bilan par catégorie */
+  .bilan-box{border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:#fff}
+  .bilan-row{margin-bottom:15px}
+  .bilan-row:last-child{margin-bottom:0}
+  .bilan-top{display:flex;align-items:center;gap:9px;margin-bottom:7px}
+  .bilan-cat{font-weight:800;font-size:13.5px;color:var(--blue-ink)}
+  .bilan-num{font-size:12.5px;font-weight:700;color:var(--grey-deep)}
+  .bilan-flag{margin-left:auto;font-size:10px;font-weight:800;letter-spacing:.5px;
+    text-transform:uppercase;padding:3px 9px;border-radius:99px}
+  .flag-ok{background:#eafaf2;color:var(--good)}
+  .flag-mid{background:#fdf6e6;color:#b8902f}
+  .flag-weak{background:#fdeeed;color:var(--bad)}
+  .bilan-bar{height:8px;background:var(--mist);border-radius:99px;overflow:hidden}
+  .bilan-bar span{display:block;height:100%;border-radius:99px;transition:width .5s}
+  .bilan-bar .b-ok{background:linear-gradient(90deg,#36c98a,var(--good))}
+  .bilan-bar .b-mid{background:linear-gradient(90deg,#f0c45e,var(--warn))}
+  .bilan-bar .b-weak{background:linear-gradient(90deg,#ec7b76,var(--bad))}
   .opts{display:flex;flex-direction:column;gap:11px}
   .opt{display:flex;align-items:center;gap:13px;padding:15px 17px;border:2px solid var(--line);
     border-radius:13px;font-weight:600;font-size:14.5px;text-align:left;transition:.15s;background:#fff;width:100%}
@@ -872,6 +889,36 @@ function resultWhitelist(){
   const maxPts=WL_PLAN.reduce((s,p)=>s+p.points.reduce((a,b)=>a+b,0),0);
   const pass=wlPoints>=WL_PASS;
   const col=pass?'var(--good)':'var(--bad)';
+
+  // --- bilan par catégorie : points obtenus / max, à partir de curQuiz + wlMiss ---
+  const bilan={};
+  curQuiz.forEach(q=>{
+    if(!bilan[q.cat])bilan[q.cat]={max:0,got:0,miss:0};
+    bilan[q.cat].max+=q.pts;
+  });
+  // tout est gagné par défaut, on retire ce qui est raté
+  Object.keys(bilan).forEach(c=>bilan[c].got=bilan[c].max);
+  wlMiss.forEach(m=>{ if(bilan[m.cat]){bilan[m.cat].got-=m.pts; bilan[m.cat].miss++;} });
+
+  // ordre d'affichage fixe
+  const order=["Lexique","HRP","Règles RP"];
+  const labels={Lexique:"Lexique RP",HRP:"Règles HRP","Règles RP":"Règles RP"};
+  const bilanHTML = order.filter(c=>bilan[c]).map(c=>{
+    const d=bilan[c];
+    const ratio=d.max?d.got/d.max:1;
+    const weak=ratio<0.6;            // catégorie faible si < 60%
+    const mid=ratio<1 && !weak;
+    const tone=weak?'b-weak':mid?'b-mid':'b-ok';
+    const tag=weak?'<span class="bilan-flag flag-weak">À retravailler</span>'
+             :mid?'<span class="bilan-flag flag-mid">Presque</span>'
+             :'<span class="bilan-flag flag-ok">Maîtrisé</span>';
+    return `<div class="bilan-row">
+      <div class="bilan-top"><span class="bilan-cat">${labels[c]}</span>
+        <span class="bilan-num">${d.got}/${d.max} pts</span>${tag}</div>
+      <div class="bilan-bar"><span class="${tone}" style="width:${Math.max(0,ratio*100)}%"></span></div>
+    </div>`;
+  }).join("");
+
   const fautes = wlMiss.length===0
     ? `<div class="no-faute">Sans-faute ! Aucune erreur sur ce test. 🍃</div>`
     : wlMiss.map(m=>`
@@ -888,9 +935,13 @@ function resultWhitelist(){
       <div class="wl-score" style="color:${col}">${wlPoints}<span class="wl-max">/ ${maxPts} pts</span></div>
       <p class="msg">${pass
         ? `Bravo, tu as atteint les ${WL_PASS} points requis. Tu es prêt à passer l'oral devant le staff.`
-        : `Il te faut ${WL_PASS} points pour valider (il t'en manque ${WL_PASS-wlPoints}). Revois les fautes ci-dessous et retente.`}</p>
+        : `Il te faut ${WL_PASS} points pour valider (il t'en manque ${WL_PASS-wlPoints}). Regarde ce qu'il y a à retravailler ci-dessous.`}</p>
     </div>
-    <div class="faute-title">${wlMiss.length===0?'Résultat':'Tes fautes ('+wlMiss.length+')'}</div>
+
+    <div class="faute-title">Bilan par catégorie</div>
+    <div class="bilan-box">${bilanHTML}</div>
+
+    <div class="faute-title">${wlMiss.length===0?'Détail':'À retravailler — tes fautes ('+wlMiss.length+')'}</div>
     ${fautes}
     <div class="nav-q" style="max-width:360px;margin:18px auto 0">
       <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="renderQuiz()">Recommencer</button>
