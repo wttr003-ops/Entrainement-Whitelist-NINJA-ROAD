@@ -65,23 +65,25 @@
   .wrap{max-width:1080px;margin:0 auto;padding:0 22px}
 
   /* ===== Header ===== */
-  header.top{position:sticky;top:0;z-index:50;backdrop-filter:blur(10px);
-    background:rgba(251,253,255,.78);border-bottom:1px solid var(--line)}
+  header.top{position:sticky;top:0;z-index:50;
+    background:linear-gradient(120deg,var(--blue-deep),var(--blue));
+    border-bottom:1px solid rgba(255,255,255,.12);
+    box-shadow:0 6px 20px -10px rgba(8,42,107,.5)}
   .nav{display:flex;align-items:center;gap:14px;height:64px}
-  .brand{display:flex;align-items:center;gap:11px;font-family:'Russo One';font-size:18px}
+  .brand{display:flex;align-items:center;gap:11px;font-family:'Russo One';font-size:18px;color:#fff}
   .logo-mark{width:40px;height:40px;flex:none;border-radius:10px;padding:4px;
-    background:linear-gradient(150deg,var(--blue-deep),var(--blue));object-fit:contain;
-    box-shadow:0 6px 14px -6px rgba(11,61,145,.6)}
+    background:rgba(255,255,255,.14);object-fit:contain;
+    box-shadow:0 6px 14px -6px rgba(0,0,0,.4)}
   .brand small{display:block;font-family:'Inter';font-weight:600;font-size:10px;
-    letter-spacing:2px;color:var(--cyan);text-transform:uppercase}
+    letter-spacing:2px;color:var(--cyan-soft);text-transform:uppercase}
   .nav-links{margin-left:auto;display:flex;gap:6px;align-items:center}
   .nav-item{padding:8px 14px;border-radius:10px;font-weight:600;font-size:14px;
-    color:var(--grey-deep);transition:.18s;cursor:pointer;display:inline-flex;align-items:center;gap:6px;
+    color:rgba(255,255,255,.88);transition:.18s;cursor:pointer;display:inline-flex;align-items:center;gap:6px;
     background:none;border:none;font-family:inherit}
-  .nav-item:hover{background:var(--mist);color:var(--blue)}
+  .nav-item:hover{background:rgba(255,255,255,.16);color:#fff}
   .nav-drop{position:relative}
   .nav-drop-btn .caret{transition:transform .2s}
-  .nav-drop.open .nav-drop-btn{background:var(--mist);color:var(--blue)}
+  .nav-drop.open .nav-drop-btn{background:rgba(255,255,255,.16);color:#fff}
   .nav-drop.open .caret{transform:rotate(180deg)}
   .drop-menu{position:absolute;top:calc(100% + 10px);right:0;min-width:300px;
     background:#fff;border:1px solid var(--line);border-radius:16px;
