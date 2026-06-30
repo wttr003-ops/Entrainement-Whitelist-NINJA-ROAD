@@ -86,23 +86,30 @@
   .nav-drop.open .nav-drop-btn{background:rgba(255,255,255,.16);color:#fff}
   .nav-drop.open .caret{transform:rotate(180deg)}
   /* lecteur musique */
-  .music{display:flex;align-items:center;gap:6px;margin-left:8px;
-    background:rgba(255,255,255,.13);border-radius:99px;padding:4px 6px}
-  .music-btn{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;
-    color:#fff;cursor:pointer;background:rgba(255,255,255,.0);transition:.16s;border:none}
+  .music{display:flex;align-items:center;gap:4px;margin-left:8px;
+    background:rgba(255,255,255,.13);border-radius:99px;padding:4px 8px 4px 6px}
+  .music-btn{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;
+    color:#fff;cursor:pointer;background:rgba(255,255,255,.0);transition:.16s;border:none;flex:none}
   .music-btn:hover{background:rgba(255,255,255,.2)}
   .music-btn .ic-off{display:none}
   .music.muted .music-btn .ic-on{display:none}
   .music.muted .music-btn .ic-off{display:block}
   .music.playing .music-btn{color:var(--cyan-soft)}
+  .music-title{font-size:11.5px;font-weight:600;color:rgba(255,255,255,.9);
+    max-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+    opacity:0;transition:.25s}
+  .music:hover .music-title,.music:focus-within .music-title{max-width:130px;opacity:1;margin:0 2px}
+  .music-next{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;
+    color:rgba(255,255,255,.85);cursor:pointer;background:none;border:none;transition:.16s;flex:none}
+  .music-next:hover{background:rgba(255,255,255,.2);color:#fff}
   .music-vol{width:0;opacity:0;height:4px;cursor:pointer;transition:.22s;
     -webkit-appearance:none;appearance:none;background:rgba(255,255,255,.3);border-radius:99px}
-  .music:hover .music-vol,.music:focus-within .music-vol{width:70px;opacity:1;margin-right:4px}
+  .music:hover .music-vol,.music:focus-within .music-vol{width:62px;opacity:1;margin:0 4px}
   .music-vol::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;
     background:#fff;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.3)}
   .music-vol::-moz-range-thumb{width:13px;height:13px;border:none;border-radius:50%;
     background:#fff;cursor:pointer}
-  @media(max-width:680px){.music{margin-left:auto}}
+  @media(max-width:680px){.music{margin-left:auto}.music-title{display:none}}
   .drop-menu{position:absolute;top:calc(100% + 10px);right:0;min-width:300px;
     background:#fff;border:1px solid var(--line);border-radius:16px;
     box-shadow:0 24px 50px -20px rgba(8,42,107,.4);padding:10px;
@@ -552,13 +559,14 @@
     </nav>
 
     <div class="music" id="music">
-      <audio id="music-audio" loop preload="auto">
-        <!-- Dépose ici le mp3 : remplace le src ci-dessous par le nom de ton fichier -->
-        <source id="music-src" src="" type="audio/mpeg">
-      </audio>
-      <button class="music-btn" id="music-btn" onclick="toggleMusic(event)" title="Musique" aria-label="Activer/couper la musique">
+      <audio id="music-audio" preload="auto"></audio>
+      <button class="music-btn" id="music-btn" onclick="toggleMusic(event)" title="Lecture / pause" aria-label="Lecture ou pause">
         <svg class="ic-on" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a9 9 0 0 1 0 14"/></svg>
         <svg class="ic-off" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M22 9l-6 6M16 9l6 6"/></svg>
+      </button>
+      <span class="music-title" id="music-title" title="">—</span>
+      <button class="music-next" id="music-next" onclick="nextTrack(event)" title="Musique suivante" aria-label="Musique suivante">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M5 4l10 8L5 20V4z"/><path d="M19 5v14"/></svg>
       </button>
       <input class="music-vol" id="music-vol" type="range" min="0" max="100" value="45" oninput="setVolume(this.value)" title="Volume" aria-label="Volume de la musique">
     </div>
@@ -1522,41 +1530,66 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){
   document.body.style.overflow='';}});
 
 /* ============================================================
-   LECTEUR MUSIQUE
+   LECTEUR MUSIQUE — playlist
    ============================================================ */
+/* Liste des pistes : { src, title }. Ajoute/retire librement.
+   Les fichiers mp3 doivent être à côté du index.html sur le serveur. */
+const PLAYLIST = [
+  {src:"musique1.mp3", title:"Loneliness & Despair (Meflurn Remix)"},
+  {src:"musique2.mp3", title:"Way of the Ninja (Jiraiya's Death)"},
+];
 const _audio=document.getElementById('music-audio');
 const _music=document.getElementById('music');
-let _musicReady=false, _userMuted=false;
-// volume initial
+const _mTitle=document.getElementById('music-title');
+let _track=0, _musicStarted=false, _userPaused=false;
+
+function _loadTrack(i,autoplay){
+  if(!PLAYLIST.length)return;
+  _track=(i+PLAYLIST.length)%PLAYLIST.length;
+  _audio.src=PLAYLIST[_track].src;
+  _mTitle.textContent=PLAYLIST[_track].title;
+  _mTitle.title=PLAYLIST[_track].title;
+  if(autoplay){
+    _audio.play().then(()=>{_music.classList.add('playing');_music.classList.remove('muted');})
+                 .catch(()=>{});
+  }
+}
+// charge la 1re piste (sans jouer tant que pas d'interaction)
 _audio.volume=0.45;
-// démarrage au premier clic/interaction sur la page (les navigateurs bloquent l'autoplay avant)
+_loadTrack(0,false);
+_mTitle.textContent=PLAYLIST.length?PLAYLIST[0].title:'—';
+
+// enchaînement automatique à la fin d'une piste
+_audio.addEventListener('ended',()=>{ _loadTrack(_track+1,true); });
+
+// démarrage au premier clic/interaction sur la page
 function _tryStartMusic(){
-  if(_musicReady || _userMuted) return;
-  if(!_audio.querySelector('source').src) return; // pas de mp3 encore
+  if(_musicStarted || _userPaused) return;
   _audio.play().then(()=>{
-    _musicReady=true;
+    _musicStarted=true;
     _music.classList.add('playing');
     _music.classList.remove('muted');
   }).catch(()=>{});
 }
 ['click','keydown','touchstart'].forEach(ev=>
-  document.addEventListener(ev,_tryStartMusic,{once:false}));
+  document.addEventListener(ev,_tryStartMusic));
 
 function toggleMusic(e){
   if(e) e.stopPropagation();
-  if(!_audio.querySelector('source').src){
-    alert("La musique n'est pas encore installée. Ajoute ton fichier mp3 pour l'activer.");
-    return;
-  }
   if(_audio.paused){
-    _userMuted=false;
+    _userPaused=false; _musicStarted=true;
     _audio.play().then(()=>{_music.classList.add('playing');_music.classList.remove('muted');}).catch(()=>{});
   } else {
-    _userMuted=true;
+    _userPaused=true;
     _audio.pause();
     _music.classList.add('muted');
     _music.classList.remove('playing');
   }
+}
+function nextTrack(e){
+  if(e) e.stopPropagation();
+  _userPaused=false; _musicStarted=true;
+  _loadTrack(_track+1,true);
 }
 function setVolume(v){
   _audio.volume=v/100;
